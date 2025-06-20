@@ -213,6 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to render dashboard charts
     function renderDashboardCharts() {
+        alert("Attempting to render dashboard charts..."); // Added for diagnostics
+
         // Project Status Pie Chart
         const projectStatusCtx = document.getElementById('projectStatusChart');
         if (projectStatusCtx) {
