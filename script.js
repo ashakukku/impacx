@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const iconSpan = menuToggle.querySelector('.hamburger-icon');
             if (isExpanded) {
                 iconSpan.classList.add('open');
-                menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Close"; // Update text node
+                menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Close";
             } else {
                 iconSpan.classList.remove('open');
-                menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Menu"; // Update text node
+                menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Menu";
             }
         });
     }
@@ -71,10 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Scroll-based Transitions
-    // Step 1: Add hidden-on-scroll to elements that need animation
     const sectionsToHide = document.querySelectorAll('main > section');
     sectionsToHide.forEach(section => {
-        if (section.id !== 'hero') { // Exclude hero from initially being hidden by this script logic
+        if (section.id !== 'hero') {
             section.classList.add('hidden-on-scroll');
         }
     });
@@ -83,24 +82,20 @@ document.addEventListener('DOMContentLoaded', () => {
         card.classList.add('hidden-on-scroll');
     });
 
-    // Step 2: NOW query for all elements that are meant to be animated
     const elementsToAnimate = document.querySelectorAll('.hidden-on-scroll');
 
-    // Step 3: Setup IntersectionObserver
     if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver((entries, observerInstance) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible-on-scroll');
-                    entry.target.classList.remove('hidden-on-scroll'); // Important to remove if it's a one-time animation
+                    entry.target.classList.remove('hidden-on-scroll');
                     observerInstance.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 }); // Adjust threshold as needed
+        }, { threshold: 0.1 });
         elementsToAnimate.forEach(el => observer.observe(el));
     } else {
-        // Fallback for browsers that don't support IntersectionObserver
-        // Make all targeted elements visible immediately
         elementsToAnimate.forEach(el => {
             el.classList.remove('hidden-on-scroll');
             el.classList.add('visible-on-scroll');
@@ -126,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSort = { column: columnIndex, direction: newDirection };
                 sortAndRebuildTable(table, columnIndex, columnType, newDirection);
 
-                // Update header classes for sort indicators
                 headers.forEach(th => {
                     th.classList.remove('sorted-asc', 'sorted-desc');
                     if (Array.from(th.parentNode.children).indexOf(th) === columnIndex) {
@@ -136,7 +130,118 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-});
+
+    // Dashboard Chart Configurations
+    const projectStatusData = {
+        type: 'pie',
+        data: {
+            labels: ["Completed", "In Progress", "Pending Review", "On Hold"],
+            datasets: [{
+                label: 'Project Status',
+                data: [60, 25, 10, 5],
+                backgroundColor: [
+                    'rgba(76, 175, 80, 0.8)',  // Green
+                    'rgba(33, 150, 243, 0.8)', // Blue
+                    'rgba(255, 193, 7, 0.8)',  // Yellow
+                    'rgba(158, 158, 158, 0.8)' // Grey
+                ],
+                borderColor: [
+                    'rgba(76, 175, 80, 1)',
+                    'rgba(33, 150, 243, 1)',
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(158, 158, 158, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Project Status Distribution' }
+            }
+        }
+    };
+
+    const fundingByCauseData = {
+        type: 'bar',
+        data: {
+            labels: ["Education", "Healthcare", "Environment", "Livelihoods", "Water Security"],
+            datasets: [{
+                label: 'Funding Amount (in Lakhs ₹)',
+                data: [120, 190, 75, 150, 60],
+                backgroundColor: 'rgba(230, 57, 70, 0.7)',
+                borderColor: 'rgba(230, 57, 70, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, ticks: { callback: function(value) { return value + 'L'; } } } },
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Funding by Cause' }
+            }
+        }
+    };
+
+    const impactOverTimeData = {
+        type: 'line',
+        data: {
+            labels: ["Jan '24", "Feb '24", "Mar '24", "Apr '24", "May '24", "Jun '24"],
+            datasets: [{
+                label: 'Beneficiaries Reached',
+                data: [500, 750, 1200, 900, 1500, 1800],
+                borderColor: 'rgba(33, 150, 243, 1)',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                fill: true,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Impact Over Time' }
+            }
+        }
+    };
+
+    // Function to render dashboard charts
+    function renderDashboardCharts() {
+        // Project Status Pie Chart
+        const projectStatusCtx = document.getElementById('projectStatusChart');
+        if (projectStatusCtx) {
+            new Chart(projectStatusCtx, projectStatusData);
+        } else {
+            console.warn('Canvas element with ID "projectStatusChart" not found.');
+        }
+
+        // Funding by Cause Bar Chart
+        const fundingByCauseCtx = document.getElementById('fundingByCauseChart');
+        if (fundingByCauseCtx) {
+            new Chart(fundingByCauseCtx, fundingByCauseData);
+        } else {
+            console.warn('Canvas element with ID "fundingByCauseChart" not found.');
+        }
+
+        // Impact Over Time Line Chart
+        const impactOverTimeCtx = document.getElementById('impactOverTimeChart');
+        if (impactOverTimeCtx) {
+            new Chart(impactOverTimeCtx, impactOverTimeData);
+        } else {
+            console.warn('Canvas element with ID "impactOverTimeChart" not found.');
+        }
+    }
+
+    // Call the function to render charts
+    renderDashboardCharts();
+
+}); // End of DOMContentLoaded
 
 function sortAndRebuildTable(table, columnIndex, columnType, direction) {
     const tbody = table.querySelector('tbody');
@@ -152,17 +257,15 @@ function sortAndRebuildTable(table, columnIndex, columnType, direction) {
         let valB = cellB;
 
         if (columnType === 'number') {
-            // For "85/100", extract the "85" part
             valA = parseFloat(cellA.split('/')[0]);
             valB = parseFloat(cellB.split('/')[0]);
         } else if (columnType === 'date') {
-            // Assuming format "DD Mon YYYY", e.g., "01 Jul 2024"
-            const partsA = cellA.split(' '); // ["DD", "Mon", "YYYY"]
+            const partsA = cellA.split(' ');
             const partsB = cellB.split(' ');
             if (partsA.length === 3 && partsB.length === 3 && monthMap.hasOwnProperty(partsA[1]) && monthMap.hasOwnProperty(partsB[1])) {
                 valA = new Date(parseInt(partsA[2]), monthMap[partsA[1]], parseInt(partsA[0]));
                 valB = new Date(parseInt(partsB[2]), monthMap[partsB[1]], parseInt(partsB[0]));
-            } else { // Fallback for unexpected date format
+            } else {
                 valA = cellA;
                 valB = cellB;
             }
@@ -177,11 +280,10 @@ function sortAndRebuildTable(table, columnIndex, columnType, direction) {
         return 0;
     });
 
-    // Remove existing rows
     while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild);
     }
 
-    // Append sorted rows
     rows.forEach(row => tbody.appendChild(row));
 }
+```

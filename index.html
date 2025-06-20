@@ -83,18 +83,15 @@
             <div class="dashboard-grid">
                 <article class="dashboard-item">
                     <h3>Project Status</h3>
-                    <p>Distribution of ongoing projects</p>
-                    <div class="chart-placeholder">[Chart: Project Status - Pie Chart]</div>
+                    <canvas id="projectStatusChart"></canvas>
                 </article>
                 <article class="dashboard-item">
                     <h3>Funding by Cause</h3>
-                    <p>Total funds allocated to different causes this year</p>
-                    <div class="chart-placeholder">[Chart: Funding by Cause - Bar Chart]</div>
+                    <canvas id="fundingByCauseChart"></canvas>
                 </article>
                 <article class="dashboard-item">
                     <h3>Impact Over Time</h3>
-                    <p>Beneficiaries reached per month</p>
-                    <div class="chart-placeholder">[Chart: Impact Over Time - Line Graph]</div>
+                    <canvas id="impactOverTimeChart"></canvas>
                 </article>
             </div>
             <article class="dashboard-item ngo-activities-table">
@@ -399,6 +396,7 @@
             <p><a href="#terms-placeholder">Terms of Use</a> | <a href="#privacy-placeholder">Privacy Policy</a></p>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="script.js" defer></script>
 </body>
 </html>
