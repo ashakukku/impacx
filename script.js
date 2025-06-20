@@ -1,5 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
+alert("script.js file loaded!"); // This should be line 1
 
+document.addEventListener('DOMContentLoaded', () => {
+    alert("DOMContentLoaded event fired and script.js is running!"); // New first line
+
+    /* Comment out all original code within this listener for now
     // Sticky Header Refinement
     const header = document.querySelector('header');
     if (header) {
@@ -140,10 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 label: 'Project Status',
                 data: [60, 25, 10, 5],
                 backgroundColor: [
-                    'rgba(76, 175, 80, 0.8)',  // Green
-                    'rgba(33, 150, 243, 0.8)', // Blue
-                    'rgba(255, 193, 7, 0.8)',  // Yellow
-                    'rgba(158, 158, 158, 0.8)' // Grey
+                    'rgba(76, 175, 80, 0.8)',
+                    'rgba(33, 150, 243, 0.8)',
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(158, 158, 158, 0.8)'
                 ],
                 borderColor: [
                     'rgba(76, 175, 80, 1)',
@@ -213,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to render dashboard charts
     function renderDashboardCharts() {
-        alert("Attempting to render dashboard charts..."); // Added for diagnostics
+        alert("Attempting to render dashboard charts...");
 
         // Project Status Pie Chart
         const projectStatusCtx = document.getElementById('projectStatusChart');
@@ -257,9 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call the function to render charts
     renderDashboardCharts();
-
+    */
 }); // End of DOMContentLoaded
 
+/* Commented out sortAndRebuildTable as well, as it's part of the original code
 function sortAndRebuildTable(table, columnIndex, columnType, direction) {
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
@@ -303,4 +308,5 @@ function sortAndRebuildTable(table, columnIndex, columnType, direction) {
 
     rows.forEach(row => tbody.appendChild(row));
 }
+*/
 ```
