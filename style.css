@@ -187,7 +187,7 @@ section { padding: 50px 20px; } /* Slightly reduced default padding */
     font-size: 0.95rem; /* Slightly larger badge text */
     box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Softer shadow */
 }
-.hero-badge strong { color: var(--text-dark); } /* Make strong text also dark */
+/* Removed strong selector as strong tag was removed from badge */
 
 /* CTA Button Styling (Global) */
 .cta-button {
@@ -497,17 +497,25 @@ footer {
 .footer-links ul li a { color: var(--footer-link); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease, padding-left 0.2s ease; }
 .footer-links ul li a:hover { color: var(--background-white); padding-left: 5px; }
 
-.social-media-icons-footer { margin-bottom: 12px; }
+.social-media-icons-footer { margin-bottom: 12px; display: flex; gap: 15px; /* Added flex for spacing */ }
 .social-icon {
-    display: inline-block;
-    margin-right: 12px; /* Consistent spacing */
+    display: inline-flex; /* Use inline-flex for better alignment of SVG */
+    align-items: center;
+    justify-content: center;
     color: var(--footer-link);
     text-decoration: none;
-    font-size: 1.4rem; /* Slightly larger */
     transition: color 0.2s ease, transform 0.2s ease;
 }
-.social-icon:last-child { margin-right: 0; }
+.social-icon svg { /* Style the SVG directly */
+    width: 24px; /* Default width from SVG attribute */
+    height: 24px; /* Default height from SVG attribute */
+    fill: currentColor; /* SVG will inherit color from parent <a> */
+}
 .social-icon:hover { color: var(--background-white); transform: scale(1.1); }
+/* Removed font-size from .social-icon as it's for SVGs now */
+/* Removed margin-right from .social-icon, using gap on parent instead */
+.social-icon:last-child { /* No specific margin needed for last child with gap */ }
+
 
 .footer-connect p { margin-bottom: 0; } /* Remove margin from p containing email */
 .footer-connect p a { color: var(--footer-link); text-decoration: none; font-size: 0.9rem; }
@@ -595,7 +603,8 @@ footer {
 
     .footer-container { grid-template-columns: 1fr; text-align: left; gap: 25px; } /* Stack but keep text left */
     .footer-brand, .footer-links ul, .footer-connect { align-items: flex-start; } /* Align items left */
-    .social-icon { font-size: 1.3rem; margin-right: 10px; }
+    .social-media-icons-footer { justify-content: flex-start; } /* Align icons to start on mobile */
+    .social-icon svg { width: 22px; height: 22px; } /* Slightly smaller SVGs on mobile */
     .footer-connect p { text-align: left; }
 }
 
