@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 5. Sticky Header Refinement (Optional: Add class on scroll)
+    // Sticky Header Refinement
     const header = document.querySelector('header');
     if (header) {
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) { // Add 'scrolled' class after 50px scroll
+            if (window.scrollY > 50) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
@@ -12,37 +12,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Accordion Functionality for FAQs
+    // Mobile Menu Toggle
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const nav = document.querySelector('header nav');
+    if (menuToggle && nav) {
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            const isExpanded = nav.classList.contains('active');
+            menuToggle.setAttribute('aria-expanded', isExpanded);
+            const iconSpan = menuToggle.querySelector('.hamburger-icon');
+            if (isExpanded) {
+                iconSpan.classList.add('open');
+                menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Close"; // Update text node
+            } else {
+                iconSpan.classList.remove('open');
+                menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Menu"; // Update text node
+            }
+        });
+    }
+
+    if (nav) {
+        const navLinks = nav.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (nav.classList.contains('active')) {
+                    nav.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                     const iconSpan = menuToggle.querySelector('.hamburger-icon');
+                    iconSpan.classList.remove('open');
+                    menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Menu";
+                }
+            });
+        });
+    }
+
+    // Accordion Functionality for FAQs
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question');
+        const questionButton = item.querySelector('button.faq-question');
         const answer = item.querySelector('.faq-answer');
 
-        if (question && answer) {
-            // Initially hide answers if not using CSS to do so by default
-            // answer.style.display = 'none'; // Or use max-height for animation
-
-            question.addEventListener('click', () => {
-                const currentlyActive = question.classList.contains('active');
-
-                // Optional: Close other open items
-                // faqItems.forEach(otherItem => {
-                //     otherItem.querySelector('.faq-question').classList.remove('active');
-                //     otherItem.querySelector('.faq-answer').style.maxHeight = null; // Or display = 'none'
-                //     otherItem.querySelector('.faq-answer').style.paddingTop = '0';
-                //     otherItem.querySelector('.faq-answer').style.paddingBottom = '0';
-                // });
-
+        if (questionButton && answer) {
+            questionButton.addEventListener('click', () => {
+                const currentlyActive = questionButton.classList.contains('active');
                 if (!currentlyActive) {
-                    question.classList.add('active');
-                    // answer.style.display = 'block'; // For simple show/hide
-                    // For smooth animation with max-height:
+                    questionButton.classList.add('active');
                     answer.style.maxHeight = answer.scrollHeight + "px";
-                    answer.style.paddingTop = '15px'; // Add padding when open
-                    answer.style.paddingBottom = '15px'; // Add padding when open
+                    answer.style.paddingTop = '15px';
+                    answer.style.paddingBottom = '15px';
                 } else {
-                    question.classList.remove('active');
-                    // answer.style.display = 'none'; // For simple show/hide
+                    questionButton.classList.remove('active');
                     answer.style.maxHeight = null;
                     answer.style.paddingTop = '0';
                     answer.style.paddingBottom = '0';
@@ -51,52 +70,105 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Scroll-based Transitions (Fade-ins using Intersection Observer)
+    // Scroll-based Transitions
     const elementsToAnimate = document.querySelectorAll('.hidden-on-scroll');
-
     if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver((entries, observerInstance) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible-on-scroll');
                     entry.target.classList.remove('hidden-on-scroll');
-                    observerInstance.unobserve(entry.target); // Stop observing once visible
+                    observerInstance.unobserve(entry.target);
                 }
             });
-        }, {
-            threshold: 0.1 // Trigger when 10% of the element is visible
-        });
-
-        elementsToAnimate.forEach(el => {
-            observer.observe(el);
-        });
+        }, { threshold: 0.1 });
+        elementsToAnimate.forEach(el => observer.observe(el));
     } else {
-        // Fallback for older browsers (optional, could just leave elements visible)
         elementsToAnimate.forEach(el => {
             el.classList.remove('hidden-on-scroll');
             el.classList.add('visible-on-scroll');
         });
     }
-
-    // Add .hidden-on-scroll to sections or elements that need animation
-    // For demonstration, let's add it to all direct child sections of main
-    // and some specific elements like cards.
     const sections = document.querySelectorAll('main > section');
-    sections.forEach(section => {
-        section.classList.add('hidden-on-scroll');
-    });
+    sections.forEach(section => { if (section.id !== 'hero') section.classList.add('hidden-on-scroll'); });
+    const cards = document.querySelectorAll('.enable-card, .solution-for-csr, .solution-for-ngos, .faq-item, .dashboard-item');
+    cards.forEach(card => card.classList.add('hidden-on-scroll'));
 
-    const cards = document.querySelectorAll('.enable-card, .solution-for-csr, .solution-for-ngos, .faq-item');
-    cards.forEach(card => {
-        card.classList.add('hidden-on-scroll');
-    });
+    // Table Sorting Functionality
+    const table = document.querySelector('.ngo-activities-table table');
+    if (table) {
+        const headers = table.querySelectorAll('th.sortable-header');
+        let currentSort = { column: null, direction: 'asc' };
 
-    // Hero badge popup - Assuming static for now. If it needs JS for hover/click:
-    // const heroBadge = document.querySelector('.hero-badge');
-    // const someTrigger = document.querySelector('#hero h1'); // Example trigger
-    // if(heroBadge && someTrigger) {
-    //    someTrigger.addEventListener('mouseenter', () => heroBadge.style.opacity = '1');
-    //    someTrigger.addEventListener('mouseleave', () => heroBadge.style.opacity = '0'); // or some other logic
-    // }
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+                const columnType = header.dataset.columnType || 'text';
 
+                let newDirection = 'asc';
+                if (currentSort.column === columnIndex) {
+                    newDirection = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                }
+
+                currentSort = { column: columnIndex, direction: newDirection };
+                sortAndRebuildTable(table, columnIndex, columnType, newDirection);
+
+                // Update header classes for sort indicators
+                headers.forEach(th => {
+                    th.classList.remove('sorted-asc', 'sorted-desc');
+                    if (Array.from(th.parentNode.children).indexOf(th) === columnIndex) {
+                        th.classList.add(newDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                    }
+                });
+            });
+        });
+    }
 });
+
+function sortAndRebuildTable(table, columnIndex, columnType, direction) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    const monthMap = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+
+    rows.sort((rowA, rowB) => {
+        const cellA = rowA.querySelectorAll('td')[columnIndex].textContent.trim();
+        const cellB = rowB.querySelectorAll('td')[columnIndex].textContent.trim();
+
+        let valA = cellA;
+        let valB = cellB;
+
+        if (columnType === 'number') {
+            // For "85/100", extract the "85" part
+            valA = parseFloat(cellA.split('/')[0]);
+            valB = parseFloat(cellB.split('/')[0]);
+        } else if (columnType === 'date') {
+            // Assuming format "DD Mon YYYY", e.g., "01 Jul 2024"
+            const partsA = cellA.split(' '); // ["DD", "Mon", "YYYY"]
+            const partsB = cellB.split(' ');
+            if (partsA.length === 3 && partsB.length === 3) {
+                valA = new Date(parseInt(partsA[2]), monthMap[partsA[1]], parseInt(partsA[0]));
+                valB = new Date(parseInt(partsB[2]), monthMap[partsB[1]], parseInt(partsB[0]));
+            } else { // Fallback for unexpected date format
+                valA = cellA;
+                valB = cellB;
+            }
+        }
+
+        if (valA < valB) {
+            return direction === 'asc' ? -1 : 1;
+        }
+        if (valA > valB) {
+            return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+
+    // Remove existing rows
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    // Append sorted rows
+    rows.forEach(row => tbody.appendChild(row));
+}
