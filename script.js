@@ -218,7 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Project Status Pie Chart
         const projectStatusCtx = document.getElementById('projectStatusChart');
         if (projectStatusCtx) {
-            new Chart(projectStatusCtx, projectStatusData);
+            try {
+                new Chart(projectStatusCtx, projectStatusData);
+            } catch (error) {
+                alert("Error rendering Project Status Pie Chart: " + error.message);
+                console.error("Error rendering Project Status Pie Chart:", error);
+            }
         } else {
             console.warn('Canvas element with ID "projectStatusChart" not found.');
         }
@@ -226,7 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Funding by Cause Bar Chart
         const fundingByCauseCtx = document.getElementById('fundingByCauseChart');
         if (fundingByCauseCtx) {
-            new Chart(fundingByCauseCtx, fundingByCauseData);
+            try {
+                new Chart(fundingByCauseCtx, fundingByCauseData);
+            } catch (error) {
+                alert("Error rendering Funding by Cause Bar Chart: " + error.message);
+                console.error("Error rendering Funding by Cause Bar Chart:", error);
+            }
         } else {
             console.warn('Canvas element with ID "fundingByCauseChart" not found.');
         }
@@ -234,7 +244,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Impact Over Time Line Chart
         const impactOverTimeCtx = document.getElementById('impactOverTimeChart');
         if (impactOverTimeCtx) {
-            new Chart(impactOverTimeCtx, impactOverTimeData);
+            try {
+                new Chart(impactOverTimeCtx, impactOverTimeData);
+            } catch (error) {
+                alert("Error rendering Impact Over Time Line Chart: " + error.message);
+                console.error("Error rendering Impact Over Time Line Chart:", error);
+            }
         } else {
             console.warn('Canvas element with ID "impactOverTimeChart" not found.');
         }
