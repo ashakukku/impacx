@@ -71,28 +71,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Scroll-based Transitions
+    // Step 1: Add hidden-on-scroll to elements that need animation
+    const sectionsToHide = document.querySelectorAll('main > section');
+    sectionsToHide.forEach(section => {
+        if (section.id !== 'hero') { // Exclude hero from initially being hidden by this script logic
+            section.classList.add('hidden-on-scroll');
+        }
+    });
+    const cardsToHide = document.querySelectorAll('.enable-card, .solution-for-csr, .solution-for-ngos, .faq-item, .dashboard-item');
+    cardsToHide.forEach(card => {
+        card.classList.add('hidden-on-scroll');
+    });
+
+    // Step 2: NOW query for all elements that are meant to be animated
     const elementsToAnimate = document.querySelectorAll('.hidden-on-scroll');
+
+    // Step 3: Setup IntersectionObserver
     if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver((entries, observerInstance) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible-on-scroll');
-                    entry.target.classList.remove('hidden-on-scroll');
+                    entry.target.classList.remove('hidden-on-scroll'); // Important to remove if it's a one-time animation
                     observerInstance.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.1 }); // Adjust threshold as needed
         elementsToAnimate.forEach(el => observer.observe(el));
     } else {
+        // Fallback for browsers that don't support IntersectionObserver
+        // Make all targeted elements visible immediately
         elementsToAnimate.forEach(el => {
             el.classList.remove('hidden-on-scroll');
             el.classList.add('visible-on-scroll');
         });
     }
-    const sections = document.querySelectorAll('main > section');
-    sections.forEach(section => { if (section.id !== 'hero') section.classList.add('hidden-on-scroll'); });
-    const cards = document.querySelectorAll('.enable-card, .solution-for-csr, .solution-for-ngos, .faq-item, .dashboard-item');
-    cards.forEach(card => card.classList.add('hidden-on-scroll'));
 
     // Table Sorting Functionality
     const table = document.querySelector('.ngo-activities-table table');
@@ -146,7 +159,7 @@ function sortAndRebuildTable(table, columnIndex, columnType, direction) {
             // Assuming format "DD Mon YYYY", e.g., "01 Jul 2024"
             const partsA = cellA.split(' '); // ["DD", "Mon", "YYYY"]
             const partsB = cellB.split(' ');
-            if (partsA.length === 3 && partsB.length === 3) {
+            if (partsA.length === 3 && partsB.length === 3 && monthMap.hasOwnProperty(partsA[1]) && monthMap.hasOwnProperty(partsB[1])) {
                 valA = new Date(parseInt(partsA[2]), monthMap[partsA[1]], parseInt(partsA[0]));
                 valB = new Date(parseInt(partsB[2]), monthMap[partsB[1]], parseInt(partsB[0]));
             } else { // Fallback for unexpected date format
