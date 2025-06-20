@@ -443,16 +443,27 @@ button.faq-question::after { content: '+'; font-size: 1.4rem; transition: transf
 button.faq-question.active::after { content: '−'; /* Minus sign */ }
 
 .faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-    color: var(--text-medium);
+    max-height: 0; /* Collapsed by default */
+    overflow: hidden; /* Hide content and scrollbars when collapsed */
+    padding-left: 20px; /* Match question padding */
+    padding-right: 20px; /* Match question padding */
+    padding-top: 0; /* Set by JS on open */
+    padding-bottom: 0; /* Set by JS on open */
     background-color: var(--card-bg);
-    font-size: 0.95rem; /* Slightly smaller answer text */
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    transition: max-height 0.3s ease-out, padding-top 0.3s ease-out, padding-bottom 0.3s ease-out;
+}
+button.faq-question.active + .faq-answer {
+    /* JS sets inline max-height to scrollHeight for animation target.
+       This CSS max-height acts as a visual cap IF scrollHeight is very large. */
+    max-height: 40vh; /* Cap visible height to 40% of viewport height */
+    overflow-y: auto; /* Enable vertical scroll if content exceeds this capped height */
+    /* JS still controls paddingTop and paddingBottom for the open animation */
 }
 .faq-answer p { margin-bottom: 0; }
 .faq-answer p span { font-weight: 600; color: var(--text-dark); } /* A: styling */
-/* Padding for answer content is set by JS */
+
 
 /* Contact Us Section */
 #contact { background-color: var(--muted-gray); text-align: center; }
@@ -607,3 +618,4 @@ footer {
 /* Add wrapper for table in HTML for this to work */
 /* <div class="table-responsive-wrapper"><table>...</table></div> */
 /* This is a reminder, can't change HTML here */
+```
