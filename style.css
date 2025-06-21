@@ -113,7 +113,27 @@ header {
     margin: 0 auto;
 }
 header.scrolled .header-container { height: 60px; }
-.logo { font-size: 1.7rem; font-weight: 700; color: var(--accent-red); }
+.logo {
+    /* Text-specific styles like font-size, font-weight, color are removed
+       as the logo is now an image. Parent .header-container handles flex alignment. */
+}
+
+.logo a {
+    display: inline-block; /* Ensures the link wraps the image correctly */
+}
+
+.logo img {
+    max-height: 45px; /* Adjust as needed for header height (default 70px, scrolled 60px) */
+    width: auto;      /* Maintain aspect ratio */
+    display: block;   /* Removes extra space below inline images if any */
+    /* Optional: add transition for hover effects if desired later */
+    /* transition: opacity 0.2s ease; */
+}
+
+/* Optional hover effect for logo image */
+/* .logo a:hover img {
+    opacity: 0.85;
+} */
 
 nav {
     display: flex;
