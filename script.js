@@ -1,3 +1,156 @@
+// Global scope functions
+function sortAndRebuildTable(table, columnIndex, columnType, direction) {
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return; // Guard clause
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    const monthMap = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+
+    rows.sort((rowA, rowB) => {
+        const cellAEl = rowA.querySelectorAll('td')[columnIndex];
+        const cellBEl = rowB.querySelectorAll('td')[columnIndex];
+        if (!cellAEl || !cellBEl) return 0; // Guard if cells not found
+
+        const cellA = cellAEl.textContent.trim();
+        const cellB = cellBEl.textContent.trim();
+
+        let valA = cellA;
+        let valB = cellB;
+
+        if (columnType === 'number') {
+            valA = parseFloat(cellA.split('/')[0]);
+            valB = parseFloat(cellB.split('/')[0]);
+            if (isNaN(valA)) valA = -Infinity; // Handle non-numeric gracefully
+            if (isNaN(valB)) valB = -Infinity;
+        } else if (columnType === 'date') {
+            const partsA = cellA.split(' ');
+            const partsB = cellB.split(' ');
+            if (partsA.length === 3 && partsB.length === 3 && monthMap.hasOwnProperty(partsA[1]) && monthMap.hasOwnProperty(partsB[1])) {
+                valA = new Date(parseInt(partsA[2]), monthMap[partsA[1]], parseInt(partsA[0]));
+                valB = new Date(parseInt(partsB[2]), monthMap[partsB[1]], parseInt(partsB[0]));
+            } else {
+                // Fallback if date format is not as expected, treat as non-sortable or keep original order
+                return 0;
+            }
+        }
+
+        // Standard string comparison if not number or date, or after conversion for date/number
+        if (valA < valB) {
+            return direction === 'asc' ? -1 : 1;
+        }
+        if (valA > valB) {
+            return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+// Moved chart data definitions to global scope to ensure they are defined
+// before renderDashboardCharts (also global) tries to use them.
+const projectStatusData = {
+    type: 'pie',
+    data: {
+        labels: ["Completed", "In Progress", "Pending Review", "On Hold"],
+        datasets: [{
+            label: 'Project Status',
+            data: [60, 25, 10, 5],
+            backgroundColor: [
+                'rgba(76, 175, 80, 0.8)', 'rgba(33, 150, 243, 0.8)',
+                'rgba(255, 193, 7, 0.8)', 'rgba(158, 158, 158, 0.8)'
+            ],
+            borderColor: [
+                'rgba(76, 175, 80, 1)', 'rgba(33, 150, 243, 1)',
+                'rgba(255, 193, 7, 1)', 'rgba(158, 158, 158, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' }, title: { display: true, text: 'Project Status Distribution' } }
+    }
+};
+
+const fundingByCauseData = {
+    type: 'bar',
+    data: {
+        labels: ["Education", "Healthcare", "Environment", "Livelihoods", "Water Security"],
+        datasets: [{
+            label: 'Funding Amount (in Lakhs ₹)', data: [120, 190, 75, 150, 60],
+            backgroundColor: 'rgba(230, 57, 70, 0.7)', borderColor: 'rgba(230, 57, 70, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, ticks: { callback: function(value) { return value + 'L'; } } } },
+        plugins: { legend: { display: false }, title: { display: true, text: 'Funding by Cause' } }
+    }
+};
+
+const impactOverTimeData = {
+    type: 'line',
+    data: {
+        labels: ["Jan '24", "Feb '24", "Mar '24", "Apr '24", "May '24", "Jun '24"],
+        datasets: [{
+            label: 'Beneficiaries Reached', data: [500, 750, 1200, 900, 1500, 1800],
+            borderColor: 'rgba(33, 150, 243, 1)', backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            fill: true, tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } },
+        plugins: { legend: { position: 'top' }, title: { display: true, text: 'Impact Over Time' } }
+    }
+};
+
+function renderDashboardCharts() {
+    alert("Attempting to render dashboard charts..."); // This is Alert C1 (Chart Alert 1)
+
+    const projectStatusCtx = document.getElementById('projectStatusChart');
+    if (projectStatusCtx) {
+        try {
+            new Chart(projectStatusCtx, projectStatusData);
+        } catch (error) {
+            alert("Error rendering Project Status Pie Chart: " + error.message);
+            console.error("Error rendering Project Status Pie Chart:", error);
+        }
+    } else {
+        console.warn('Canvas element with ID "projectStatusChart" not found.');
+    }
+
+    const fundingByCauseCtx = document.getElementById('fundingByCauseChart');
+    if (fundingByCauseCtx) {
+        try {
+            new Chart(fundingByCauseCtx, fundingByCauseData);
+        } catch (error) {
+            alert("Error rendering Funding by Cause Bar Chart: " + error.message);
+            console.error("Error rendering Funding by Cause Bar Chart:", error);
+        }
+    } else {
+        console.warn('Canvas element with ID "fundingByCauseChart" not found.');
+    }
+
+    const impactOverTimeCtx = document.getElementById('impactOverTimeChart');
+    if (impactOverTimeCtx) {
+        try {
+            new Chart(impactOverTimeCtx, impactOverTimeData);
+        } catch (error) {
+            alert("Error rendering Impact Over Time Line Chart: " + error.message);
+            console.error("Error rendering Impact Over Time Line Chart:", error);
+        }
+    } else {
+        console.warn('Canvas element with ID "impactOverTimeChart" not found.');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     alert("Debug Alert 1: DOMContentLoaded Start");
 
@@ -23,16 +176,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const isExpanded = nav.classList.contains('active');
             menuToggle.setAttribute('aria-expanded', isExpanded);
             const iconSpan = menuToggle.querySelector('.hamburger-icon');
-            if (isExpanded) {
-                iconSpan.classList.add('open');
-                // Ensure text node exists before trying to set its value
-                if (menuToggle.childNodes.length > 1 && menuToggle.childNodes[menuToggle.childNodes.length -1].nodeType === Node.TEXT_NODE) {
-                    menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Close";
-                }
-            } else {
-                iconSpan.classList.remove('open');
-                 if (menuToggle.childNodes.length > 1 && menuToggle.childNodes[menuToggle.childNodes.length -1].nodeType === Node.TEXT_NODE) {
-                    menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Menu";
+            if (iconSpan) {
+                if (isExpanded) {
+                    iconSpan.classList.add('open');
+                    if (menuToggle.childNodes.length > 1 && menuToggle.childNodes[menuToggle.childNodes.length -1].nodeType === Node.TEXT_NODE) {
+                        menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Close";
+                    }
+                } else {
+                    iconSpan.classList.remove('open');
+                    if (menuToggle.childNodes.length > 1 && menuToggle.childNodes[menuToggle.childNodes.length -1].nodeType === Node.TEXT_NODE) {
+                        menuToggle.childNodes[menuToggle.childNodes.length -1].nodeValue = " Menu";
+                    }
                 }
             }
         });
@@ -43,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener('click', () => {
                 if (nav.classList.contains('active')) {
                     nav.classList.remove('active');
-                    if(menuToggle) { // Check if menuToggle exists
+                    if(menuToggle) {
                         menuToggle.setAttribute('aria-expanded', 'false');
                         const iconSpan = menuToggle.querySelector('.hamburger-icon');
                         if (iconSpan) iconSpan.classList.remove('open');
@@ -105,11 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, { threshold: 0.1 });
         elementsToAnimate.forEach(el => {
-            if(el) observer.observe(el); // Check if el is not null
+            if(el) observer.observe(el);
         });
     } else {
         elementsToAnimate.forEach(el => {
-            if(el) { // Check if el is not null
+            if(el) {
                 el.classList.remove('hidden-on-scroll');
                 el.classList.add('visible-on-scroll');
             }
@@ -117,8 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     alert("Debug Alert 5: After Scroll-based Transitions");
 
-    // Table Sorting Functionality
-    // Note: sortAndRebuildTable function is defined outside DOMContentLoaded
+    // Table Sorting Functionality (sortAndRebuildTable is global)
     const table = document.querySelector('.ngo-activities-table table');
     if (table) {
         const headers = table.querySelectorAll('th.sortable-header');
@@ -135,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 currentSort = { column: columnIndex, direction: newDirection };
+                // Call the global sortAndRebuildTable function
                 sortAndRebuildTable(table, columnIndex, columnType, newDirection);
 
                 headers.forEach(th => {
@@ -146,182 +300,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    // No specific alert here, Alert 5 covers this initialization phase.
-
-    // Dashboard Chart Configurations
-    const projectStatusData = {
-        type: 'pie',
-        data: {
-            labels: ["Completed", "In Progress", "Pending Review", "On Hold"],
-            datasets: [{
-                label: 'Project Status',
-                data: [60, 25, 10, 5],
-                backgroundColor: [
-                    'rgba(76, 175, 80, 0.8)',
-                    'rgba(33, 150, 243, 0.8)',
-                    'rgba(255, 193, 7, 0.8)',
-                    'rgba(158, 158, 158, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(76, 175, 80, 1)',
-                    'rgba(33, 150, 243, 1)',
-                    'rgba(255, 193, 7, 1)',
-                    'rgba(158, 158, 158, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'top' },
-                title: { display: true, text: 'Project Status Distribution' }
-            }
-        }
-    };
-
-    const fundingByCauseData = {
-        type: 'bar',
-        data: {
-            labels: ["Education", "Healthcare", "Environment", "Livelihoods", "Water Security"],
-            datasets: [{
-                label: 'Funding Amount (in Lakhs ₹)',
-                data: [120, 190, 75, 150, 60],
-                backgroundColor: 'rgba(230, 57, 70, 0.7)',
-                borderColor: 'rgba(230, 57, 70, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, ticks: { callback: function(value) { return value + 'L'; } } } },
-            plugins: {
-                legend: { display: false },
-                title: { display: true, text: 'Funding by Cause' }
-            }
-        }
-    };
-
-    const impactOverTimeData = {
-        type: 'line',
-        data: {
-            labels: ["Jan '24", "Feb '24", "Mar '24", "Apr '24", "May '24", "Jun '24"],
-            datasets: [{
-                label: 'Beneficiaries Reached',
-                data: [500, 750, 1200, 900, 1500, 1800],
-                borderColor: 'rgba(33, 150, 243, 1)',
-                backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                fill: true,
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } },
-            plugins: {
-                legend: { position: 'top' },
-                title: { display: true, text: 'Impact Over Time' }
-            }
-        }
-    };
-    alert("Debug Alert 6: After Chart Data Config");
+    alert("Debug Alert 6: After Table Sorting Setup"); // Changed from "After Chart Data Config"
 
     alert("Debug Alert 7: Before calling renderDashboardCharts");
-    renderDashboardCharts();
+    if (typeof Chart !== 'undefined') {
+        // Chart data objects (projectStatusData, etc.) are now global
+        if (typeof projectStatusData !== 'undefined' && typeof fundingByCauseData !== 'undefined' && typeof impactOverTimeData !== 'undefined') {
+            renderDashboardCharts();
+        } else {
+            alert("Chart data objects are not defined globally or are undefined!");
+        }
+    } else {
+        alert("Chart.js library (Chart object) is not defined! Make sure it's loaded before this script.");
+    }
     alert("Debug Alert 8: After calling renderDashboardCharts");
 
 }); // End of DOMContentLoaded
-
-function renderDashboardCharts() {
-    alert("Attempting to render dashboard charts...");
-
-    const projectStatusCtx = document.getElementById('projectStatusChart');
-    if (projectStatusCtx) {
-        try {
-            new Chart(projectStatusCtx, projectStatusData);
-        } catch (error) {
-            alert("Error rendering Project Status Pie Chart: " + error.message);
-            console.error("Error rendering Project Status Pie Chart:", error);
-        }
-    } else {
-        console.warn('Canvas element with ID "projectStatusChart" not found.');
-    }
-
-    const fundingByCauseCtx = document.getElementById('fundingByCauseChart');
-    if (fundingByCauseCtx) {
-        try {
-            new Chart(fundingByCauseCtx, fundingByCauseData);
-        } catch (error) {
-            alert("Error rendering Funding by Cause Bar Chart: " + error.message);
-            console.error("Error rendering Funding by Cause Bar Chart:", error);
-        }
-    } else {
-        console.warn('Canvas element with ID "fundingByCauseChart" not found.');
-    }
-
-    const impactOverTimeCtx = document.getElementById('impactOverTimeChart');
-    if (impactOverTimeCtx) {
-        try {
-            new Chart(impactOverTimeCtx, impactOverTimeData);
-        } catch (error) {
-            alert("Error rendering Impact Over Time Line Chart: " + error.message);
-            console.error("Error rendering Impact Over Time Line Chart:", error);
-        }
-    } else {
-        console.warn('Canvas element with ID "impactOverTimeChart" not found.');
-    }
-}
-
-function sortAndRebuildTable(table, columnIndex, columnType, direction) {
-    const tbody = table.querySelector('tbody');
-    if (!tbody) return;
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-
-    const monthMap = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
-
-    rows.sort((rowA, rowB) => {
-        const cellAEl = rowA.querySelectorAll('td')[columnIndex];
-        const cellBEl = rowB.querySelectorAll('td')[columnIndex];
-        if (!cellAEl || !cellBEl) return 0;
-
-        const cellA = cellAEl.textContent.trim();
-        const cellB = cellBEl.textContent.trim();
-
-        let valA = cellA;
-        let valB = cellB;
-
-        if (columnType === 'number') {
-            valA = parseFloat(cellA.split('/')[0]);
-            valB = parseFloat(cellB.split('/')[0]);
-            if (isNaN(valA)) valA = -Infinity;
-            if (isNaN(valB)) valB = -Infinity;
-        } else if (columnType === 'date') {
-            const partsA = cellA.split(' ');
-            const partsB = cellB.split(' ');
-            if (partsA.length === 3 && partsB.length === 3 && monthMap.hasOwnProperty(partsA[1]) && monthMap.hasOwnProperty(partsB[1])) {
-                valA = new Date(parseInt(partsA[2]), monthMap[partsA[1]], parseInt(partsA[0]));
-                valB = new Date(parseInt(partsB[2]), monthMap[partsB[1]], parseInt(partsB[0]));
-            } else {
-                return 0;
-            }
-        }
-
-        if (valA < valB) {
-            return direction === 'asc' ? -1 : 1;
-        }
-        if (valA > valB) {
-            return direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-    });
-
-    while (tbody.firstChild) {
-        tbody.removeChild(tbody.firstChild);
-    }
-
-    rows.forEach(row => tbody.appendChild(row));
-}
 ```
