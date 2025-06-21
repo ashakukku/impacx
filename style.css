@@ -114,26 +114,16 @@ header {
 }
 header.scrolled .header-container { height: 60px; }
 .logo {
-    /* Text-specific styles like font-size, font-weight, color are removed
-       as the logo is now an image. Parent .header-container handles flex alignment. */
+    /* Text-specific styles removed */
 }
-
 .logo a {
-    display: inline-block; /* Ensures the link wraps the image correctly */
+    display: inline-block;
 }
-
 .logo img {
-    max-height: 45px; /* Adjust as needed for header height (default 70px, scrolled 60px) */
-    width: auto;      /* Maintain aspect ratio */
-    display: block;   /* Removes extra space below inline images if any */
-    /* Optional: add transition for hover effects if desired later */
-    /* transition: opacity 0.2s ease; */
+    max-height: 45px;
+    width: auto;
+    display: block;
 }
-
-/* Optional hover effect for logo image */
-/* .logo a:hover img {
-    opacity: 0.85;
-} */
 
 nav {
     display: flex;
@@ -277,24 +267,18 @@ section { padding: 50px 20px; }
     border-radius: 8px;
     box-shadow: 0 4px 12px var(--card-shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative; /* Important for Chart.js responsiveness and tooltips */
+    position: relative;
 }
 .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
 .dashboard-item h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.6rem; }
-/* Removed p styling from general .dashboard-item as canvases don't have it now */
 
-/* Specific height for chart items, excluding the table item */
 .dashboard-grid > .dashboard-item:not(.ngo-activities-table) {
     height: 320px;
 }
-.dashboard-item p { /* This will apply to any p tags within dashboard items, e.g. if we add descriptive text later */
+.dashboard-item p {
     font-size: 0.9rem;
     color: var(--text-light);
     margin-bottom: 10px;
-}
-
-.chart-placeholder { /* This class is no longer used for canvas containers */
-    /* Styles removed as canvas elements are used directly */
 }
 
 .ngo-activities-table { grid-column: 1 / -1; }

@@ -51,8 +51,6 @@ function sortAndRebuildTable(table, columnIndex, columnType, direction) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-// Moved chart data definitions to global scope to ensure they are defined
-// before renderDashboardCharts (also global) tries to use them.
 const projectStatusData = {
     type: 'pie',
     data: {
@@ -112,7 +110,7 @@ const impactOverTimeData = {
 };
 
 function renderDashboardCharts() {
-    alert("Attempting to render dashboard charts..."); // This is Alert C1 (Chart Alert 1)
+    alert("Attempting to render dashboard charts...");
 
     const projectStatusCtx = document.getElementById('projectStatusChart');
     if (projectStatusCtx) {
@@ -288,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 currentSort = { column: columnIndex, direction: newDirection };
-                // Call the global sortAndRebuildTable function
                 sortAndRebuildTable(table, columnIndex, columnType, newDirection);
 
                 headers.forEach(th => {
@@ -300,11 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    alert("Debug Alert 6: After Table Sorting Setup"); // Changed from "After Chart Data Config"
+    alert("Debug Alert 6: After Table Sorting Setup");
 
     alert("Debug Alert 7: Before calling renderDashboardCharts");
     if (typeof Chart !== 'undefined') {
-        // Chart data objects (projectStatusData, etc.) are now global
         if (typeof projectStatusData !== 'undefined' && typeof fundingByCauseData !== 'undefined' && typeof impactOverTimeData !== 'undefined') {
             renderDashboardCharts();
         } else {
