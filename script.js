@@ -1,9 +1,4 @@
-alert("script.js file loaded!"); // This should be line 1
-
 document.addEventListener('DOMContentLoaded', () => {
-    alert("DOMContentLoaded event fired and script.js is running!"); // New first line
-
-    /* Comment out all original code within this listener for now
     // Sticky Header Refinement
     const header = document.querySelector('header');
     if (header) {
@@ -261,10 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call the function to render charts
     renderDashboardCharts();
-    */
+
 }); // End of DOMContentLoaded
 
-/* Commented out sortAndRebuildTable as well, as it's part of the original code
 function sortAndRebuildTable(table, columnIndex, columnType, direction) {
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
@@ -308,5 +302,4 @@ function sortAndRebuildTable(table, columnIndex, columnType, direction) {
 
     rows.forEach(row => tbody.appendChild(row));
 }
-*/
 ```
