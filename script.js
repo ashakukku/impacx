@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    alert("Debug Alert 1: DOMContentLoaded Start");
+
     // Sticky Header Refinement
     const header = document.querySelector('header');
     if (header) {
@@ -10,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    alert("Debug Alert 2: After Sticky Header");
 
     // Mobile Menu Toggle
     const menuToggle = document.querySelector('.mobile-menu-toggle');
@@ -44,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    alert("Debug Alert 3: After Mobile Menu");
 
     // Accordion Functionality for FAQs
     const faqItems = document.querySelectorAll('.faq-item');
@@ -68,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+    alert("Debug Alert 4: After FAQ Accordion");
 
     // Scroll-based Transitions
     const sectionsToHide = document.querySelectorAll('main > section');
@@ -100,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             el.classList.add('visible-on-scroll');
         });
     }
+    alert("Debug Alert 5: After Scroll-based Transitions");
 
     // Table Sorting Functionality
     const table = document.querySelector('.ngo-activities-table table');
@@ -129,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    // Note: No specific alert after Table Sorting as it's part of general setup.
+    // Alert 5 covers all preceding general DOM manipulations.
 
     // Dashboard Chart Configurations
     const projectStatusData = {
@@ -209,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+    alert("Debug Alert 6: After Chart Data Config");
 
     // Function to render dashboard charts
     function renderDashboardCharts() {
@@ -254,8 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Call the function to render charts
+    alert("Debug Alert 7: Before calling renderDashboardCharts");
     renderDashboardCharts();
+    alert("Debug Alert 8: After calling renderDashboardCharts");
 
 }); // End of DOMContentLoaded
 
